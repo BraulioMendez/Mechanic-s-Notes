@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Notes</string>
+    <string name="name_owner_car">Nombre del Cliente</string>
+    <string name="name_car">Modelo del Automovil</string>
+    <string name="mileage_car">Kilometraje</string>
+    <string name="year_car_price">Año</string>
+    <string name="service">Servicio Realizado</string>
+    <string name="total_price">Precio Total</string>
+
+    <string name="firebase_url">https://mechanics-notes.firebaseio.com/</string>
+
+    <string name="validation_name">^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]+</string>
+    <string name="name_error">Nombre Invalido</string>
+
+    <string name="validation_name_car">[a-zA-Z][0-9]?</string>
+    <string name="name_car_error">Automovil Invalido</string>
+
+    <string name="validation_mileage">[0-9]</string>
+    <string name="mileage_error">Kilometraje Invalido</string>
+
+    <string name="validation_year">[0-9]</string>
+    <string name="year_car_error">Kilometraje Invalido</string>
+
+    <string name="validation_service">^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]+</string>
+    <string name="service_error">Servicio Invalido</string>
+
+    <string name="validation_price">[0-9]$?</string>
+    <string name="price_error">Precio Invalido</string>
+
+</resources>
