@@ -4,6 +4,7 @@ package com.brauliomendez.mechanicsnotes.model;
  * Created by Braulio on 28/06/2016.
  */
 public class Service {
+
     private String nameOwner;
     private String car;
     private String mileage;
@@ -11,7 +12,6 @@ public class Service {
     private String service;
     private String totalPrice;
     private String date;
-
 
     public Service() { }
 

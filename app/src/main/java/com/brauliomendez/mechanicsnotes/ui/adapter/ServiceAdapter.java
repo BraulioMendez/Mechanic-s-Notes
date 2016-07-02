@@ -1,7 +1,9 @@
 package com.brauliomendez.mechanicsnotes.ui.adapter;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +11,9 @@ import android.widget.TextView;
 
 import com.brauliomendez.mechanicsnotes.R;
 import com.brauliomendez.mechanicsnotes.model.Service;
+import com.firebase.client.Query;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -18,10 +22,7 @@ import butterknife.ButterKnife;
 /**
  * Created by Braulio on 29/06/2016.
  */
-public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceViewHolder> {
-
-    private Context context;
-    private List<Service> mDataServices;
+public class ServiceAdapter extends FirebaseRecyclerAdapter<ServiceAdapter.ServiceViewHolder, Service> {
 
     public static class ServiceViewHolder extends RecyclerView.ViewHolder {
 
@@ -38,14 +39,11 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
         }
     }
 
-    public ServiceAdapter(Context context, List<Service> mDataServices) {
-        this.context = context;
-        this.mDataServices = mDataServices;
+    public ServiceAdapter(Query query, Class<Service> itemClass, @Nullable ArrayList<Service> items,
+                          @Nullable ArrayList<String> keys) {
+        super(query, itemClass, items, keys);
     }
 
-    @Override public int getItemCount() {
-        return mDataServices != null ? mDataServices.size():0;
-    }
 
     @Override public ServiceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).
@@ -55,7 +53,7 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
 
 
     @Override public void onBindViewHolder(ServiceViewHolder holder, int position) {
-        Service service = mDataServices.get(position);
+        Service service = getItem(position);
 
         holder.mNameOwnerLabel.setText(service.getNameOwner());
         holder.mNameCarLabel.setText(service.getCar());
@@ -64,6 +62,23 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
         holder.mServiceCarText.setText(service.getService());
         holder.mTotalPriceText.setText(service.getTotalPrice());
 
+    }
+
+
+    @Override protected void itemAdded(Service item, String key, int position) {
+        Log.d("MyAdapter", "Added a new item to the adapter.");
+    }
+
+    @Override protected void itemChanged(Service oldItem, Service newItem, String key, int position) {
+        Log.d("MyAdapter", "Changed an item.");
+    }
+
+    @Override protected void itemRemoved(Service item, String key, int position) {
+        Log.d("MyAdapter", "Removed an item from the adapter.");
+    }
+
+    @Override protected void itemMoved(Service item, String key, int oldPosition, int newPosition) {
+        Log.d("MyAdapter", "Moved an item.");
     }
 
 }

@@ -11,8 +11,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.brauliomendez.mechanicsnotes.R;
-import com.brauliomendez.mechanicsnotes.model.ServiceCollection;
+import com.brauliomendez.mechanicsnotes.model.Service;
 import com.brauliomendez.mechanicsnotes.ui.adapter.ServiceAdapter;
+import com.firebase.client.Firebase;
+import com.firebase.client.Query;
+
+import org.parceler.Parcels;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -25,8 +31,19 @@ public class ServiceFragment extends Fragment {
 
     @Bind(R.id.main_recycler) RecyclerView mRecyclerView;
 
+    private final static String SAVED_ADAPTER_ITEMS = "SAVED_ADAPTER_ITEMS";
+    private final static String SAVED_ADAPTER_KEYS = "SAVED_ADAPTER_KEYS";
+
+    private Query mQuery;
     private ServiceAdapter mServiceAdapter;
-    private ServiceCollection mServiceCollection;
+    private ArrayList<Service> mAdapterItems;
+    private ArrayList<String> mAdapterKeys;
+
+    @Override public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        handleInstanceState(savedInstanceState);
+        setupFirebase();
+    }
 
     @Nullable @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                                                  @Nullable Bundle savedInstanceState) {
@@ -40,16 +57,34 @@ public class ServiceFragment extends Fragment {
         setUpRecyclerView();
     }
 
-    private void setUpRecyclerView() {
-        RecyclerView.LayoutManager layoutManager =
-                new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        if (mServiceCollection != null){
-        mServiceAdapter = new ServiceAdapter(getContext(), mServiceCollection.mServices);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setAdapter(mServiceAdapter);
+    private void handleInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null &&
+                savedInstanceState.containsKey(SAVED_ADAPTER_ITEMS) &&
+                savedInstanceState.containsKey(SAVED_ADAPTER_KEYS)) {
+            mAdapterItems = Parcels.unwrap(savedInstanceState.getParcelable(SAVED_ADAPTER_ITEMS));
+            mAdapterKeys = savedInstanceState.getStringArrayList(SAVED_ADAPTER_KEYS);
+        } else {
+            mAdapterItems = new ArrayList<Service>();
+            mAdapterKeys = new ArrayList<String>();
         }
     }
 
+    @Override public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(SAVED_ADAPTER_ITEMS, Parcels.wrap(mServiceAdapter.getItems()));
+        outState.putStringArrayList(SAVED_ADAPTER_KEYS, mServiceAdapter.getKeys());
+    }
+
+    private void setupFirebase() {
+        String firebaseLocation = getResources().getString(R.string.firebase_url);
+        mQuery = new Firebase(firebaseLocation);
+    }
+
+    private void setUpRecyclerView() {
+        mServiceAdapter = new ServiceAdapter(mQuery, Service.class, mAdapterItems, mAdapterKeys);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mRecyclerView.setAdapter(mServiceAdapter);
+    }
 
     @OnClick(R.id.fab) public void setService() {
 
