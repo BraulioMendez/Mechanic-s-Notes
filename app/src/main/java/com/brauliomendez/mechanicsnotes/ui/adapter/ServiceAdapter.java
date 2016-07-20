@@ -1,20 +1,24 @@
 package com.brauliomendez.mechanicsnotes.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.brauliomendez.mechanicsnotes.R;
 import com.brauliomendez.mechanicsnotes.model.Service;
+import com.bumptech.glide.Glide;
 import com.firebase.client.Query;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,6 +36,7 @@ public class ServiceAdapter extends FirebaseRecyclerAdapter<ServiceAdapter.Servi
         @Bind(R.id.year_car_text) TextView mYearCarText;
         @Bind(R.id.service_car_text) TextView mServiceCarText;
         @Bind(R.id.total_price_text) TextView mTotalPriceText;
+        @Bind(R.id.share_button) Button mShareButton;
 
         public ServiceViewHolder(View itemView) {
             super(itemView);
@@ -55,15 +60,33 @@ public class ServiceAdapter extends FirebaseRecyclerAdapter<ServiceAdapter.Servi
     @Override public void onBindViewHolder(ServiceViewHolder holder, int position) {
         Service service = getItem(position);
 
+
         holder.mNameOwnerLabel.setText(service.getNameOwner());
         holder.mNameCarLabel.setText(service.getCar());
         holder.mMilegeCarText.setText(service.getMileage());
         holder.mYearCarText.setText(service.getYear());
-        holder.mServiceCarText.setText(service.getService());
-        holder.mTotalPriceText.setText(service.getTotalPrice());
+        holder.mServiceCarText.setText( service.getService());
+        holder.mTotalPriceText.setText( service.getTotalPrice());
 
+        shareInfoService(holder, service.getNameOwner(), service.getNameOwner() + "\n" + service.getCar() +
+                "\n" + service.getMileage() + "\n" + service.getYear()  + "\n" + service.getService() +
+                "\n" + service.getTotalPrice());
     }
 
+    private void shareInfoService(ServiceViewHolder holder, final String mail, final String data) {
+
+        holder.mShareButton.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View view) {
+                Intent email = new Intent(Intent.ACTION_SEND);
+                email.putExtra(Intent.EXTRA_EMAIL, new String[] { mail });
+                email.putExtra(Intent.EXTRA_SUBJECT, "Cuenta");
+                email.putExtra(Intent.EXTRA_TEXT, data);
+                email.setType("text/plain");
+
+                view.getContext().startActivity(Intent.createChooser(email, "Choose an Email client"));
+            }
+        });
+    }
 
     @Override protected void itemAdded(Service item, String key, int position) {
         Log.d("MyAdapter", "Added a new item to the adapter.");

@@ -1,10 +1,14 @@
 package com.brauliomendez.mechanicsnotes.model;
 
+import org.parceler.Parcel;
+
 /**
  * Created by Braulio on 28/06/2016.
  */
+@Parcel
 public class Service {
 
+    private String picture;
     private String nameOwner;
     private String car;
     private String mileage;
@@ -14,6 +18,10 @@ public class Service {
     private String date;
 
     public Service() { }
+
+    public String getPicture() { return picture; }
+
+    public void setPicture(String picture) { this.picture = picture; }
 
     public String getNameOwner() { return nameOwner; }
 

@@ -26,5 +26,11 @@
 
     <string name="validation_price">[0-9]*</string>
     <string name="price_error">Precio Invalido</string>
+    <string name="share_button">COMPARTIR</string>
+    <string name="car_label">Automóvil : </string>
+    <string name="mileage_label">Kilometraje : </string>
+    <string name="year_label">Modelo : </string>
+    <string name="service_label">Servicio : </string>
+    <string name="price_label">Precio Total : </string>
 
 </resources>
