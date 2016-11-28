@@ -7,8 +7,6 @@ import org.parceler.Parcel;
  */
 @Parcel
 public class Service {
-
-    private String picture;
     private String nameOwner;
     private String car;
     private String mileage;
@@ -19,9 +17,14 @@ public class Service {
 
     public Service() { }
 
-    public String getPicture() { return picture; }
-
-    public void setPicture(String picture) { this.picture = picture; }
+    public Service(String nameOwner, String car, String mileage, String year, String service, String totalPrice) {
+        this.nameOwner = nameOwner;
+        this.car = car;
+        this.mileage = mileage;
+        this.year = year;
+        this.service = service;
+        this.totalPrice = totalPrice;
+    }
 
     public String getNameOwner() { return nameOwner; }
 

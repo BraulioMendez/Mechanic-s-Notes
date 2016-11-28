@@ -12,5 +12,6 @@ public class NotesApp extends Application {
     @Override public void onCreate() {
         super.onCreate();
         Firebase.setAndroidContext(this);
+        Firebase.getDefaultConfig().setPersistenceEnabled(true);
     }
 }

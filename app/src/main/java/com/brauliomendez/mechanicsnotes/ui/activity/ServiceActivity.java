@@ -17,18 +17,17 @@ import butterknife.ButterKnife;
  */
 public class ServiceActivity extends AppCompatActivity {
 
-    @Bind(R.id.toolbar) Toolbar mToolbar;
+    @Bind(R.id.service_toolbar) Toolbar toolbar;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setSupportActionBar(mToolbar);
+        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
         setFragment();
     }
 
     private void setFragment() {
-
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.container_fragment);
         if (fragment == null) {

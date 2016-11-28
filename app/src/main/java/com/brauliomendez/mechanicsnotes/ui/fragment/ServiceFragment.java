@@ -29,7 +29,7 @@ import butterknife.OnClick;
  */
 public class ServiceFragment extends Fragment {
 
-    @Bind(R.id.main_recycler) RecyclerView mRecyclerView;
+    @Bind(R.id.main_recycler) RecyclerView recyclerView;
 
     private final static String SAVED_ADAPTER_ITEMS = "SAVED_ADAPTER_ITEMS";
     private final static String SAVED_ADAPTER_KEYS = "SAVED_ADAPTER_KEYS";
@@ -42,7 +42,7 @@ public class ServiceFragment extends Fragment {
     @Override public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         handleInstanceState(savedInstanceState);
-        setupFirebase();
+        mQuery = new Firebase("https://mechanics-notes.firebaseio.com/");
     }
 
     @Nullable @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -54,7 +54,14 @@ public class ServiceFragment extends Fragment {
 
     @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        handleInstanceState(savedInstanceState);
         setUpRecyclerView();
+    }
+
+    @Override public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(SAVED_ADAPTER_ITEMS, Parcels.wrap(mServiceAdapter.getItems()));
+        outState.putStringArrayList(SAVED_ADAPTER_KEYS, mServiceAdapter.getKeys());
     }
 
     private void handleInstanceState(Bundle savedInstanceState) {
@@ -69,31 +76,19 @@ public class ServiceFragment extends Fragment {
         }
     }
 
-    @Override public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(SAVED_ADAPTER_ITEMS, Parcels.wrap(mServiceAdapter.getItems()));
-        outState.putStringArrayList(SAVED_ADAPTER_KEYS, mServiceAdapter.getKeys());
-    }
-
-    private void setupFirebase() {
-        String firebaseLocation = getResources().getString(R.string.firebase_url);
-        mQuery = new Firebase(firebaseLocation);
-    }
-
     private void setUpRecyclerView() {
-        mServiceAdapter = new ServiceAdapter(mQuery, Service.class, mAdapterItems, mAdapterKeys);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecyclerView.setAdapter(mServiceAdapter);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(),
+                LinearLayoutManager.VERTICAL, false);
+        ServiceAdapter serviceAdapter = new ServiceAdapter(mQuery, Service.class, mAdapterItems, mAdapterKeys);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(serviceAdapter);
     }
 
     @OnClick(R.id.fab) public void setService() {
-
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container_fragment, new DetailFragment())
                 .addToBackStack("detail_fragment")
                 .commit();
-
     }
-
 }
