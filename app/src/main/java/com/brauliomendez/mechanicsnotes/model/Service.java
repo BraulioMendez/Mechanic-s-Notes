@@ -1,8 +1,11 @@
 package com.brauliomendez.mechanicsnotes.model;
 
+import org.parceler.Parcel;
+
 /**
  * Created by Braulio on 28/06/2016.
  */
+@Parcel
 public class Service {
     private String nameOwner;
     private String car;
@@ -12,8 +15,16 @@ public class Service {
     private String totalPrice;
     private String date;
 
-
     public Service() { }
+
+    public Service(String nameOwner, String car, String mileage, String year, String service, String totalPrice) {
+        this.nameOwner = nameOwner;
+        this.car = car;
+        this.mileage = mileage;
+        this.year = year;
+        this.service = service;
+        this.totalPrice = totalPrice;
+    }
 
     public String getNameOwner() { return nameOwner; }
 

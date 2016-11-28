@@ -7,5 +7,9 @@ import java.util.List;
  */
 public class ServiceCollection {
 
-    public List<Service> mServices;
+    private List<Service> services;
+
+    public List<Service> getServices() { return services; }
+
+    public void setServices(List<Service> services) { this.services = services; }
 }
