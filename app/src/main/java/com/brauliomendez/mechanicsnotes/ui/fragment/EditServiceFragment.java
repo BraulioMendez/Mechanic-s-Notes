@@ -18,10 +18,10 @@ import butterknife.OnClick;
 import io.realm.Realm;
 
 /**
- * @author Braulio Méndez Jiménez
- * @since 28/06/16
+ * Created by Braulio on 12/12/2016.
  */
-public class DetailFragment extends Fragment {
+
+public class EditServiceFragment extends Fragment {
 
     @Bind(R.id.name_editText) TextInputEditText nameEditText;
     @Bind(R.id.car_editText) TextInputEditText carEditText;
@@ -42,11 +42,23 @@ public class DetailFragment extends Fragment {
     @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         realm = Realm.getDefaultInstance();
+        setData();
     }
 
-    private void setNewService() {
+    private void setData(){
+        Bundle bundle = getArguments();
+        nameEditText.setText(bundle.getString("name_owner_car"));
+        carEditText.setText(bundle.getString("car"));
+        mileageEditText.setText(bundle.getString("mileage"));
+        yearCarEditText.setText(bundle.getString("year"));
+        serviceEditText.setText(bundle.getString("service"));
+        priceEditText.setText(bundle.getString("price"));
+    }
+
+    private void editService() {
+        Service service = realm.where(Service.class).equalTo("id",
+                mileageEditText.getText().toString()).findFirst();
         realm.beginTransaction();
-        Service service = realm.createObject(Service.class);
         service.setId(mileageEditText.getText().toString());
         service.setNameOwner(nameEditText.getText().toString());
         service.setService(serviceEditText.getText().toString());
@@ -57,8 +69,8 @@ public class DetailFragment extends Fragment {
         realm.commitTransaction();
     }
 
-    @OnClick(R.id.fab) public void setService() {
-        setNewService();
+    @OnClick(R.id.fab) public void updateService() {
+        editService();
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container_fragment, new ServiceFragment())
@@ -66,6 +78,4 @@ public class DetailFragment extends Fragment {
         fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 }
-
-
 

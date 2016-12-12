@@ -2,16 +2,20 @@ package com.brauliomendez.mechanicsnotes.app;
 
 import android.app.Application;
 
-import com.firebase.client.Firebase;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
- * Created by Braulio on 28/06/2016.
+ * @author Braulio Méndez Jiménez
+ * @since 28/06/16
  */
 public class NotesApp extends Application {
 
     @Override public void onCreate() {
         super.onCreate();
-        Firebase.setAndroidContext(this);
-        Firebase.getDefaultConfig().setPersistenceEnabled(true);
+        RealmConfiguration config = new RealmConfiguration.Builder(this)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(config);
     }
 }

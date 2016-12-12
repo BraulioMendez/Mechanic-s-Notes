@@ -13,7 +13,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * Created by Braulio on 28/06/2016.
+ * @author Braulio Méndez Jiménez
+ * @since 28/06/16
  */
 public class ServiceActivity extends AppCompatActivity {
 
@@ -22,8 +23,8 @@ public class ServiceActivity extends AppCompatActivity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
         setFragment();
     }
 

@@ -1,9 +1,11 @@
 package com.brauliomendez.mechanicsnotes.ui.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,37 +15,25 @@ import android.view.ViewGroup;
 import com.brauliomendez.mechanicsnotes.R;
 import com.brauliomendez.mechanicsnotes.model.Service;
 import com.brauliomendez.mechanicsnotes.ui.adapter.ServiceAdapter;
-import com.firebase.client.Firebase;
-import com.firebase.client.Query;
-
-import org.parceler.Parcels;
-
-import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.realm.Realm;
+import io.realm.RealmResults;
+import mx.leo.easyrecycler.util.RecyclerViewItemClickListener;
+import mx.leo.easyrecycler.util.extensions.RecyclerViewExtensionsKt;
 
 /**
- * Created by Braulio on 28/06/2016.
+ * @author Braulio Méndez Jiménez
+ * @since 28/06/16
  */
 public class ServiceFragment extends Fragment {
 
     @Bind(R.id.main_recycler) RecyclerView recyclerView;
 
-    private final static String SAVED_ADAPTER_ITEMS = "SAVED_ADAPTER_ITEMS";
-    private final static String SAVED_ADAPTER_KEYS = "SAVED_ADAPTER_KEYS";
-
-    private Query mQuery;
-    private ServiceAdapter mServiceAdapter;
-    private ArrayList<Service> mAdapterItems;
-    private ArrayList<String> mAdapterKeys;
-
-    @Override public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        handleInstanceState(savedInstanceState);
-        mQuery = new Firebase("https://mechanics-notes.firebaseio.com/");
-    }
+    private Realm realm;
+    private RealmResults<Service> services;
 
     @Nullable @Override public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                                                  @Nullable Bundle savedInstanceState) {
@@ -54,34 +44,68 @@ public class ServiceFragment extends Fragment {
 
     @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        handleInstanceState(savedInstanceState);
+        realm = Realm.getDefaultInstance();
         setUpRecyclerView();
     }
 
-    @Override public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(SAVED_ADAPTER_ITEMS, Parcels.wrap(mServiceAdapter.getItems()));
-        outState.putStringArrayList(SAVED_ADAPTER_KEYS, mServiceAdapter.getKeys());
-    }
-
-    private void handleInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null &&
-                savedInstanceState.containsKey(SAVED_ADAPTER_ITEMS) &&
-                savedInstanceState.containsKey(SAVED_ADAPTER_KEYS)) {
-            mAdapterItems = Parcels.unwrap(savedInstanceState.getParcelable(SAVED_ADAPTER_ITEMS));
-            mAdapterKeys = savedInstanceState.getStringArrayList(SAVED_ADAPTER_KEYS);
-        } else {
-            mAdapterItems = new ArrayList<Service>();
-            mAdapterKeys = new ArrayList<String>();
-        }
-    }
 
     private void setUpRecyclerView() {
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(),
-                LinearLayoutManager.VERTICAL, false);
-        ServiceAdapter serviceAdapter = new ServiceAdapter(mQuery, Service.class, mAdapterItems, mAdapterKeys);
-        recyclerView.setLayoutManager(layoutManager);
+        final ServiceAdapter serviceAdapter = new ServiceAdapter();
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(serviceAdapter);
+        services = realm.where(Service.class).findAll();
+        for (Service service : services) {
+            serviceAdapter.addItem(service);
+        }
+        RecyclerViewExtensionsKt.OnItemClickListener(recyclerView,
+                new RecyclerViewItemClickListener.OnItemClickListener() {
+            @Override public void onItemClick(View view, Integer integer) {
+                Service service = serviceAdapter.getItems().get(integer);
+                showInfoDialog(service.getService(), serviceAdapter, integer,
+                        service.getNameOwner(), service.getCar(), service.getMileage(), service.getYear(),
+                        service.getService(), service.getTotalPrice());
+            }
+        });
+    }
+
+    public void showInfoDialog(final String service, final ServiceAdapter serviceAdapter, final int position,
+                               final String nameOwner, final String car, final String mileage, final String year, String carService,
+                               final String price) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+        dialog.setTitle(service);
+        dialog.setMessage("¿Que deseas hacer?");
+        dialog.setPositiveButton("ELIMINAR", new DialogInterface.OnClickListener() {
+            @Override public void onClick(DialogInterface dialog, int which) {
+                realm.beginTransaction();
+                services.remove(position);
+                serviceAdapter.deleteItem(position);
+                realm.commitTransaction();
+            }
+        });
+        dialog.setNegativeButton("EDITAR", new DialogInterface.OnClickListener() {
+            @Override public void onClick(DialogInterface dialogInterface, int i) {
+                Bundle bundle = new Bundle();
+                bundle.putString("name_owner_car", nameOwner);
+                bundle.putString("car", car);
+                bundle.putString("mileage", mileage);
+                bundle.putString("year", year);
+                bundle.putString("service", service);
+                bundle.putString("price", price);
+                EditServiceFragment editServiceFragment = new EditServiceFragment();
+                editServiceFragment.setArguments(bundle);
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container_fragment, editServiceFragment)
+                        .commit();
+                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
+        });
+        dialog.show();
+    }
+
+    @Override public void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 
     @OnClick(R.id.fab) public void setService() {

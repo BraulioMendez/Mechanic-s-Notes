@@ -5,23 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Fecha"
-        android:id="@+id/calendar_label"
-        android:layout_gravity="center_horizontal"
-        android:layout_above="@+id/name_textInput"
-        android:layout_centerHorizontal="true"/>
-
     <android.support.design.widget.TextInputLayout
         android:id="@+id/name_textInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="25dp"
         android:paddingRight="25dp"
+        android:layout_marginTop="30dp"
         android:textColorHint="@color/colorAccent"
-        android:layout_above="@+id/car_textInput"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
@@ -44,8 +35,9 @@
         android:layout_height="wrap_content"
         android:paddingLeft="25dp"
         android:paddingRight="25dp"
+        android:layout_marginTop="20dp"
         android:textColorHint="@color/colorAccent"
-        android:layout_above="@+id/mileage_textInput"
+        android:layout_below="@id/name_textInput"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="28dp">
@@ -69,8 +61,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="200dp"
+        android:layout_marginTop="20dp"
         android:textColorHint="@color/colorAccent"
-        android:layout_alignTop="@+id/year_car_textInput">
+        android:layout_below="@id/car_textInput">
 
         <android.support.design.widget.TextInputEditText
             android:paddingTop="15dp"
@@ -93,10 +86,10 @@
         android:layout_marginRight="25dp"
         android:layout_marginLeft="200dp"
         android:textColorHint="@color/colorAccent"
-        android:layout_above="@+id/service_textInput"
+        android:layout_below="@id/car_textInput"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="30dp">
+        android:layout_marginTop="20dp">
 
         <android.support.design.widget.TextInputEditText
             android:paddingTop="15dp"
@@ -118,7 +111,8 @@
         android:paddingLeft="25dp"
         android:paddingRight="25dp"
         android:textColorHint="@color/colorAccent"
-        android:layout_above="@+id/price_textInput"
+        android:layout_below="@id/mileage_textInput"
+        android:layout_marginTop="20dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
 
@@ -142,7 +136,8 @@
         android:paddingLeft="25dp"
         android:paddingRight="25dp"
         android:textColorHint="@color/colorAccent"
-        android:layout_above="@+id/fab"
+        android:layout_below="@id/service_textInput"
+        android:layout_marginTop="20dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="38dp">
